@@ -1,0 +1,92 @@
+
+.typing-box {
+    height: 50px;
+}
+
+#typing {
+    font-family: 'inherit';
+    font-size: 30px;
+}
+
+#time {
+    padding-top: 7px;
+    font-size: 25px;
+    border-left: rgb(255, 255, 255) solid 5px;
+    border-right: rgb(255, 255, 255) solid 5px;
+    border-radius: 3px;
+}
+span {
+    font-family: 'inherit';
+    font-size: 30px;
+    padding: 10px 2px 10px 2px;
+}
+
+.flag {
+    position: relative;
+    padding: 0px;
+    background-color: rgb(198, 198, 198);
+    border-radius: 4px;
+    border: rgb(198, 198, 198) solid 2px;
+    border-top: rgb(198, 198, 198) solid 10px;
+    border-bottom: rgb(198, 198, 198) solid 10px;
+}
+
+#showList {
+    height: 130px;
+}
+.tb{
+    font-size: 16px;
+}
+.check{
+    position: absolute;
+    top: 66px;
+    right: 30px;
+    color: rgba(0,0,0,0);
+    
+}
+.check2{
+    position: absolute;
+    top: 350px;
+    right: 30px;
+    color: rgba(0,0,0,0);
+    
+}
+.checkTrue{
+    color: #00eb27;
+}
+.hide{
+    position: absolute;
+    top: 153px;
+    right: 30px;
+}
+.hide2{
+    position: absolute;
+    top: 247px;
+    right: 30px;
+}
+.hide3{
+    position: absolute;
+    top: 175px;
+    right: 30px;
+}
+.strength{
+    position: absolute;
+    top: 147px;
+    right: 65px;
+}
+.bn{
+    background-color: rgb(128, 199, 249); 
+    /* background-color: rgb(0, 149, 255); */
+    color: white;
+}
+
+.unlockbtn{
+    background-color: rgb(0, 149, 255);
+}
+.unlockbtn:hover{
+    background-color: rgb(0, 128, 219);
+}
+#tblogin{
+    font-size: 20px;
+
+}
