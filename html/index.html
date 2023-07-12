@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/exceljs/dist/exceljs.min.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../fontawesome-free-6.4.0-web/css/all.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/jquery-3.6.4.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/main.js"></script>
+    <style>
+        .container {
+            width: 1000px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <!-- Setting language -->
+        <div class="row">
+            <div class="col-2">
+                <select name="" id="language" class="form-control" onchange="readFileAndSaveToList()">
+                    <option value="vietnamese">Tiếng Việt</option>
+                    <option value="english">English</option>
+                </select>
+            </div>
+            <div class="col-8"></div>
+            <div class="col-2">
+                <nav class="nav-bar">
+                    <ul class="nav">
+                        <li class="nav-item"><a href="#" class="nav-link" data-toggle="modal" onclick="resetTime()"
+                                data-target="#loginModal">Login</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link" data-toggle="modal" onclick="resetTime()"
+                                data-target="#registerModal">Register</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+    </header>
+    <div class="container">
+
+        <div class="row">
+            <h1 class="col-12 text-success text-center" style="font-size: 50px;">Typing Text</h1>
+        </div>
+        <br>
+        <div class="words" style="border: rgb(117, 117, 117) solid; border-radius: 5px; padding:10px 20px 10px 20px;">
+            <div class="row">
+                <div id="showList"></div>
+            </div>
+        </div>
+
+        <br>
+        <div class="row typing-box">
+            <input class="col-10 form-control" type="text" id="typing" oninput="setTime(),format(typing.value)">
+            <div class="col-1 form-control text-center bg-secondary text-white" id="time">1:00</div>
+            <button class="col-1 btn btn-success " onclick="resetTime()"><i class="fa-solid fa-arrows-rotate"
+                    style="color: #ffffff;font-size: 25px;"></i></button>
+        </div>
+        <br>
+        <div class="row">
+            Từ đúng<div class="col-1">
+                <div id="correctWord">0</div>
+            </div>
+            Từ sai<div class="col-1">
+                <div id="wrongWord">0</div>
+            </div>
+            Tổng từ<div class="col-1">
+                <div id="total">0</div>
+            </div>
+            Độ chính xác<div class="col-1">
+                <div id="percent">100</div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center text-success">Leaderboard</h2>
+                <table class="table">
+                    <thead>
+                        <th>Top</th>
+                        <th>Name</th>
+                        <th>Correct</th>
+                        <th>Wrong</th>
+                        <th>Percent</th>
+                        <th>WPM</th>
+                        <th>Time</th>
+                    </thead>
+                    <tbody id="bxh"></tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Login Modal -->
+        <div class="modal fade" id="loginModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Login</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <span class="text-danger" id="tblogin">hello</span>
+                            <div class="form-group">
+                                
+                                <label for="loginUsername">Username</label>
+                                <input type="text" class="form-control" id="loginUsername" placeholder="Enter username" oninput="disablelogin()"> 
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">Password</label>
+                                <input type="password" class="form-control" id="loginPassword"
+                                    placeholder="Enter password">
+                                    <i class="fa-solid fa-eye hide3" id="hide3"></i>
+                            </div>
+                            
+                        </form>
+                        <button type="submit" class="btn bn col-12" id="loginbuton">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Modal -->
+        <div class="modal fade" id="registerModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Register</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="">
+                                
+                                <label for="registerName">Username</label>
+                                
+                                <input type="text" class="form-control"id="registerName" placeholder="Enter username" oninput="disable()">
+                                <i id="name" class="fa-sharp fa-regular fa-circle-check fa-sm check" ></i>
+                                <span class="text-danger tb" id="tbusername"></span>
+                            </div>
+                            <div class="">
+                                <label for="registerPassword">Password</label>
+                                <input type="password" class="form-control" id="registerPassword" oninput="checkStrength(),disable()"
+                                    placeholder="Enter password">
+                                    <i class="fa-solid fa-eye hide" id="hide"></i>
+                                    <i class="strength" id="checkstrenght"></i>
+                                    <span class="text-danger tb" id="tbpassword"></span>
+                            </div>
+                            <div class="">
+                                <label for="registerPassword">Confirm Password</label>
+                                <input type="password" class="form-control" id="registerPassword2" oninput="disable()"
+                                    placeholder="Enter password">
+                                    <i class="fa-solid fa-eye hide2" id="hide2"></i>
+                                    <span class="text-danger tb" id="tbconfirm"></span>
+                            </div>
+                            <div class="">
+                                <label for="registerEmail">Email</label>
+                                <input type="email" class="form-control" id="registerEmail" placeholder="Enter email" oninput="disable()">
+                                <i class="fa-sharp fa-regular fa-circle-check fa-sm check2" id="email"></i>
+                                <span class="text-danger tb" id="tbemail"></span>
+                            </div>
+                           
+                            
+                        </form>
+                        <button type="submit" id="registerbuton" class="btn bn col-12 " onclick="addPersonToDB(),luuThongTin()">Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="myModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+
+                        <h3 class="text-success modal-title">YOUR RESULT</h3>
+
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-5">
+                                <h1 class="text-success text-right" id="result"></span>
+                            </div>
+                            <div class="col-7">
+                                <h1 class="text-success">WPM</h1>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-5">
+                                <h5 for="">Percent</label>
+                            </div>
+                            <div class="col-5">
+                                <h5 class=" text-right" id="percentt"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-5">
+                                <h5 class="" for="">Correct</h5>
+                            </div>
+                            <div class="col-5">
+                                <h5 class=" text-right text-success" id="correct"></h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-5">
+                                <h5 class="" for="">Wrong</label>
+                            </div>
+                            <div class="col-5">
+                                <h5 class=" text-right text-danger" id="wrong"></h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success" data-dismiss="modal" onclick="addToLocal()">Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <script>
+            function luuThongTin() {
+              const username = document.getElementById('registerName').value;
+              const password = document.getElementById('registerPassword').value;
+              const email = document.getElementById('registerEmail').value;
+        
+              const danhSach = [
+                { username: username, password: password, email: email }
+              ];
+        
+              const workbook = new ExcelJS.Workbook();
+              const worksheet = workbook.addWorksheet('Thông tin');
+        
+              worksheet.columns = [
+                { header: 'Username', key: 'username', width: 20 },
+                { header: 'Password', key: 'password', width: 20 },
+                { header: 'Email', key: 'email', width: 30 }
+              ];
+        
+              danhSach.forEach(item => {
+                worksheet.addRow(item);
+              });
+        
+              workbook.xlsx.writeBuffer()
+                .then(buffer => {
+                  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'thong_tin.xlsx';
+                  a.click();
+                  URL.revokeObjectURL(url);
+                  console.log('Thông tin đã được lưu vào file Excel.');
+                })
+                .catch(error => {
+                  console.log('Đã xảy ra lỗi:', error);
+                });
+            }
+          </script>
+
+
+
+
+
+
+
+
+
+
+
+        <script>
+            var icon = document.querySelector(".hide");
+        icon.addEventListener("click", togglePasswordVisibility);
+        
+        function togglePasswordVisibility() {
+            let passwordInput = document.getElementById("registerPassword");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+//chưa được rút gọn
+        var icon2 = document.querySelector(".hide2");
+        icon2.addEventListener("click", togglePasswordVisibility2);
+        
+        function togglePasswordVisibility2() {
+            let passwordInput = document.getElementById("registerPassword2");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon2.classList.remove("fa-eye");
+                icon2.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon2.classList.remove("fa-eye-slash");
+                icon2.classList.add("fa-eye");
+            }
+        }
+
+        //chưa được rút gọn
+        var icon3 = document.querySelector(".hide3");
+        icon3.addEventListener("click", togglePasswordVisibility2);
+        
+        function togglePasswordVisibility2() {
+            let passwordInput = document.getElementById("loginPassword");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon3.classList.remove("fa-eye");
+                icon3.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon3.classList.remove("fa-eye-slash");
+                icon3.classList.add("fa-eye");
+            }
+        }
+        
+        function checkStrength(){
+            let kt = /^(?=.*[A-z])(?=.*\d).{8,20}$/;
+            let kt2 = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/;
+            
+            if(kt.test($("#registerPassword").val())){
+                $("#checkstrenght").html("Normal");
+                document.getElementById("checkstrenght").classList.remove("text-danger");
+                document.getElementById("checkstrenght").classList.add("text-success");
+                if(kt2.test($("#registerPassword").val())){
+                    $("#checkstrenght").html("Strong");
+                    document.getElementById("checkstrenght").classList.add("text-success");
+                }
+            }else{
+                $("#checkstrenght").html("Weak");
+                document.getElementById("checkstrenght").classList.remove("text-success");
+                document.getElementById("checkstrenght").classList.add("text-danger");
+            }
+            if($("#registerPassword").val().trim()==""){
+                $("#checkstrenght").html("");
+            }
+        }
+
+            function limitInput(inputElement, maxLength) {
+                inputElement.addEventListener('input', function() {
+                    var inputValue = inputElement.value;
+                    var sanitizedValue = inputValue.slice(0, maxLength).replace(/\s/g, '');
+                    inputElement.value = sanitizedValue;
+                });
+            }
+          
+            limitInput(document.getElementById('registerName'), 20);
+            limitInput(document.getElementById('registerPassword'), 20);
+            limitInput(document.getElementById('registerPassword2'), 20);
+           /*function formatspace(word){
+                kt = /\s/;
+                if (kt.test($("#registerEmail").val())) document.getElementById('registerEmail').value = word.trim();
+           }*/
+
+            function checkUsername() {
+                var kt = /^.{3,20}$/;
+                var kt2 = /^\w{3,20}$/;
+                if ($("#registerName").val().trim() == "") {
+                   document.getElementById("registerName").classList.add("border-danger");
+                   $("#tbusername").html("");
+                   document.getElementById("name").classList.remove("checkTrue");
+                    return false;
+                }
+                else if(!kt.test($("#registerName").val())){
+                    document.getElementById("registerName").classList.add("border-danger");
+                    $("#tbusername").html("Between 3 to 20 characters");
+                    document.getElementById("name").classList.remove("checkTrue");
+                    return false;
+                }
+                if (!kt2.test($("#registerName").val())) {
+                    document.getElementById("registerName").classList.add("border-danger");
+                    $("#tbusername").html("Only numbers and letters allowed");
+                    document.getElementById("name").classList.remove("checkTrue");
+                    return false;
+                }
+                else{
+                    $("#tbusername").html("");
+                document.getElementById("registerName").classList.remove("border-danger");
+                document.getElementById("name").classList.add("checkTrue");
+                document.getElementById("registerName").classList.add("border-success");
+                return true;
+                } 
+            }
+            $("#registerName").blur(checkUsername);
+
+            function checkPassword() {
+                let kt = /^.{8,20}$/;
+                let kt2 = /^(?=.*[A-z])(?=.*\d).{8,20}$/;
+                if ($("#registerPassword").val().trim() == "") {
+                   document.getElementById("registerPassword").classList.add("border-danger");
+                   $("#tbpassword").html("");
+                   
+                    return false;
+                }
+                else if(!kt.test($("#registerPassword").val())){
+                    document.getElementById("registerPassword").classList.add("border-danger");
+                    $("#tbpassword").html("Between 8 to 20 characters");
+                    
+                    return false;
+                }
+                if (!kt2.test($("#registerPassword").val())) {
+                    document.getElementById("registerName").classList.add("border-danger");
+                    $("#tbpassword").html("Must include numbers and characters");
+                    
+                    return false;
+                }
+                else{
+                    $("#tbpassword").html("");
+                document.getElementById("registerPassword").classList.remove("border-danger");
+               
+                document.getElementById("registerPassword").classList.add("border-success");
+                return true;
+                } 
+            }
+            $("#registerPassword").blur(checkPassword);
+
+            function checkPassword2(){
+                if(checkPassword()){
+                if($("#registerPassword").val()!=$("#registerPassword2").val()){
+                    document.getElementById("registerPassword2").classList.add("border-danger");
+                    $("#tbconfirm").html("Re-entered password does not match");
+                    return false;
+                }else {
+                    document.getElementById("registerPassword2").classList.remove("border-danger");
+                    document.getElementById("registerPassword2").classList.add("border-success");
+                    $("#tbconfirm").html("");
+                    return true;
+                }
+            }
+                document.getElementById("registerPassword2").classList.remove("border-danger");
+                document.getElementById("registerPassword2").classList.remove("border-success");
+            return false;
+            }
+            $("#registerPassword2").blur(checkPassword2);
+            $("#registerPassword").blur(checkPassword2);
+            
+            function checkEmail() {
+                var kt = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+                if ($("#registerEmail").val().trim() == "") {
+                   document.getElementById("registerEmail").classList.add("border-danger");
+                    $("#tbemail").html("");
+                   document.getElementById("email").classList.remove("checkTrue");
+                    return false;
+                }
+                else if(!kt.test($("#registerEmail").val())){
+                    document.getElementById("registerEmail").classList.add("border-danger");
+                    $("#tbemail").html("Between 3 to 20 characters");
+                    document.getElementById("email").classList.remove("checkTrue");
+                    return false;
+                }
+                else{
+                    $("#tbemail").html("");
+                document.getElementById("registerEmail").classList.remove("border-danger");
+                document.getElementById("email").classList.add("checkTrue");
+                document.getElementById("registerEmail").classList.add("border-success");
+                return true;
+                } 
+            }
+            $("#registerEmail").blur(checkEmail);
+
+            function disable(){
+                if(checkUsername()&&checkPassword()&&checkPassword2()&&checkEmail()){
+                    document.getElementById("registerbuton").classList.add("unlockbtn");
+                    return true;
+                }else{
+                    document.getElementById("registerbuton").classList.remove("unlockbtn");
+                    return false;
+                }
+            }
+            function disablelogin(){
+                var kt = /^\w{3,20}$/;
+                if(kt.test($("#loginUsername").val())){
+                    document.getElementById("loginbuton").classList.add("unlockbtn");
+                    return true;
+                }    
+                else{
+                    document.getElementById("loginbuton").classList.remove("unlockbtn");
+                    return false;
+                }
+            }
+
+            function addPersonToDB(){
+                if(!(checkUsername()&&checkPassword()&&checkPassword2()&&checkEmail())){
+                    
+                    return false;
+                }else{
+                    alert("You have successfully registered!");
+                    $( document.getElementById("registerModal")).modal('hide');//ẩn modal sau khi đăng ký thành công
+                    return true;
+                }
+            }
+
+        </script>
+        <script>
+
+            var count = 59;
+            var called = false;
+
+            function setTime() {
+                if (!called) {
+                    timer = setInterval(countdown, 1000);
+                    called = true;
+                }
+            }
+            function countdown() {
+                if (count == -1) {
+                    $(document).ready(function () {
+                        setTimeout(function () {
+                            $('#myModal').modal('show');
+                        }, 0);
+                    });
+                    document.getElementById("result").textContent = wpm;
+                    document.getElementById("percentt").textContent = percent + "%";
+                    document.getElementById("correct").textContent = correctWord;
+                    document.getElementById("wrong").textContent = wrongWord;
+                    document.getElementById('showList').innerHTML = "";
+                    document.getElementById('typing').value = "";
+                    clearInterval(timer);
+                    return true;
+                } else if (count >= 10)
+                    document.getElementById('time').innerHTML = "0:" + count--;
+                else document.getElementById('time').innerHTML = "0:0" + count--;
+            }
+            function resetTime() {
+                showList(0);
+                clearInterval(timer);
+                document.getElementById('time').innerHTML = "1:00";
+                count = 59;
+                called = false;
+                document.getElementById('typing').value = "";
+                i = 0;
+                wrongWord = 0;
+                correctWord = 0;
+                total = 0;
+                wpm = 0;
+                percent = 100;
+                document.getElementById("correctWord").innerHTML = correctWord;
+                document.getElementById("wrongWord").innerHTML = wrongWord;
+                document.getElementById("percent").innerHTML = percent;
+                document.getElementById("total").innerHTML = total;
+            }
+            var i = 0;
+            var imax;
+            var correctWord = 0;
+            var wrongWord = 0;
+            var total = 0;
+            var wpm = 0;
+            var percent = 100;
+
+
+            function addToLocal() {
+                var currentTime = new Date();
+                var localTime = currentTime.toLocaleString();
+
+                let ds = JSON.parse(localStorage.getItem("ds")) || [];
+
+                let person = {
+                    name: "khang",
+                    correct: correctWord,
+                    wrong: wrongWord,
+                    percent: percent,
+                    wpm: wpm,
+                    time: localTime
+                };
+
+                ds.push(person);
+                sortList(ds);
+                localStorage.setItem("ds", JSON.stringify(ds));
+                show();
+
+                return true;
+            }
+
+            function sortList(list) {
+                return list.sort((a, b) => b.wpm - a.wpm);
+            }
+
+            function show() {
+                let list = JSON.parse(localStorage.getItem("ds")) || [];
+
+                let showList = document.getElementById("bxh");
+                showList.innerHTML = "";
+                for (let i = 0; i < list.length && i < 10; i++) {
+                    let item = document.createElement("tr");
+                    item.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${list[i].name}</td>
+            <td>${list[i].correct}</td>
+            <td>${list[i].wrong}</td>
+            <td>${list[i].percent}</td>
+            <td>${list[i].wpm}</td>
+            <td>${list[i].time}</td>
+           
+        `
+                    showList.appendChild(item);
+                }
+            }
+
+            show();
+
+
+
+
+            function format(word) {
+                if (word.trim() == "") document.getElementById('typing').value = word.toString().replace(/.+/, "");
+                kt = /\s/;
+                if (kt.test($("#typing").val())) {
+                    total = i + 1;
+                    document.getElementById("total").innerHTML = total;
+                    document.getElementById('w' + (i + 1)).innerHTML = ` <span class="flag">${document.getElementById('w' + (i + 1)).textContent.trim()}</sp>`;//bong mo
+                    if (word.trim() == (document.getElementById('w' + i).textContent.trim())) {
+                        document.getElementById('w' + (i)).innerHTML = ` <span class="text-success" >${document.getElementById('w' + (i++)).textContent}</sp>`;
+                        document.getElementById("correctWord").innerHTML = ++correctWord;
+                    }
+
+                    else {
+                        document.getElementById('w' + (i)).innerHTML = ` <span class="text-danger">${document.getElementById('w' + (i++)).textContent}</sp>`;
+                        document.getElementById("wrongWord").innerHTML = ++wrongWord;
+                    }
+                    percent = (correctWord * 100 / i).toFixed(2);
+                    document.getElementById("percent").innerHTML = percent;
+                    wpm = (correctWord + wrongWord * (correctWord * 100 / i) / 100).toFixed(0);
+                    document.getElementById('typing').value = word.toString().replace(/.+/, "");
+                    if (i % 30 == 0) showList(i);
+                }
+            }
+            var words;
+            function readFileAndSaveToList() {
+                document.getElementById('typing').value = "";
+                var filePath = "../data/vietnamese.txt";
+                if ($("#language").val() == "vietnamese")
+                    var filePath = "../data/vietnamese.txt";
+                else var filePath = "../data/english.txt";
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var content = e.target.result;
+                    var lines = content.split('\n');
+                    words = lines.filter(function (line) {
+                        return line.trim() !== ''; // Loại bỏ các dòng trống
+                    });
+
+                    showList(0);
+
+                };
+
+                fetch(filePath)
+                    .then(response => response.blob())
+                    .then(blob => {
+                        reader.readAsText(blob);
+                    })
+                    .catch(error => {
+                        console.log('Đã xảy ra lỗi:', error);
+                    });
+            }
+            readFileAndSaveToList();
+
+
+            function showList(ii) {
+                let list = [];
+
+                for (let j = 0; j < 1000; j++) {
+                    let value = words[Math.floor(Math.random() * 100)];
+                    let word = {
+                        index: 'w' + list.length,
+                        value: value,
+                    };
+                    list.push(word);
+                }
+
+                let ifirst = ii;
+                let showList = document.getElementById("showList");
+                imax = list.length;
+                showList.innerHTML = "";
+                for (; ii <= ifirst + 30 && ii < imax; ii++) {
+                    let item = document.createElement("span");
+
+                    item.innerHTML = `
+            <span id="${list[ii].index}"><span >${list[ii].value}</span></span>
+        `
+
+
+                    showList.appendChild(item);
+                }
+                document.getElementById('w' + (ifirst + 30)).innerHTML = ` <span style="color: white;">${document.getElementById('w' + ifirst).textContent.trim()}</sp>`;
+                document.getElementById('w' + ifirst).innerHTML = ` <span class="flag">${document.getElementById('w' + ifirst).textContent.trim()}</sp>`;
+            }
+            showList(0);
+
+
+
+        </script>
+</body>
+
+</html>
